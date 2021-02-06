@@ -15,4 +15,12 @@ describe("File Management", () => {
     fileManagement.createFile("test.txt");
     expect(writeStub.callCount).to.equal(1);
   });
+
+  it("Should throw an exception if the file already exists", () => {
+    const writeStub = sinon.stub(fs, "writeFileSync");
+    writeStub.throws(new Error());
+    const fileManagement = proxyquire("./file.management", {fs});
+
+    expect(() => fileManagement.createFile("test.txt")).to.throw();
+  });
 });
