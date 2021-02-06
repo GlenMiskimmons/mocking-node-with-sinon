@@ -1,13 +1,17 @@
 const { expect } = require("chai");
-const { createSandbox, spy } = require("sinon");
+const sinon = require("sinon");
 const fs = require("fs");
 const proxyquire = require("proxyquire");
 const fileManagement = require("./file.management");
 
 describe("File Management", () => {
+  afterEach(() => {
+    sinon.restore();
+  });
+
   describe("When creating a new File", () => {
     it("Should call writeFileSync", () => {
-      const writeSpy = spy(fs, "writeFileSync");
+      const writeSpy = sinon.spy(fs, "writeFileSync");
       const fileManagement = proxyquire('./file.management', { fs });
       fileManagement.createFile("test.txt");
 
@@ -15,7 +19,7 @@ describe("File Management", () => {
     });
 
     it("Should not create a new file if no file is specified", () => {
-      const writeSpy = spy(fs, "writeFileSync");
+      const writeSpy = sinon.spy(fs, "writeFileSync");
       const fileManagement = proxyquire('./file.management', { fs });
 
       try {
@@ -23,11 +27,10 @@ describe("File Management", () => {
       } catch (error) {
         expect(writeSpy.notCalled).to.be.true;
       }
-      
     });
 
     it.skip("Should call writeFileSync - injected", () => {
-      const writeSpy = spy(fs, "writeFileSync");
+      const writeSpy = sinon.spy(fs, "writeFileSync");
       fileManagement.createFileInjected("test.txt", fs);
 
       expect(writeSpy.calledWith("./data/test.txt", "")).to.be.true;
